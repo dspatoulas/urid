@@ -1,6 +1,6 @@
 [package]
 name = "resource-id"
-version = "0.2.0"
+version = "0.1.0"
 edition = "2021"
 authors = [
     "DJ Spatoulas <dspatoulas21@gmail.com>"
@@ -12,7 +12,7 @@ repository = "https://github.com/dspatoulas/resource-id"
 [dependencies]
 
 # Web Frameworks
-schemars = { version = "0.9"}
+schemars = { version = "0.8"}
 
 # Database libs
 sqlx = { version = "0.8", features = ["postgres"] }
