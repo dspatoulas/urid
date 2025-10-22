@@ -1,6 +1,6 @@
 [package]
 name = "resource-id"
-version = "0.1.0"
+version = "0.1.1"
 edition = "2021"
 authors = [
     "DJ Spatoulas <dspatoulas21@gmail.com>"
@@ -15,7 +15,7 @@ repository = "https://github.com/dspatoulas/resource-id"
 schemars = { version = "0.8"}
 
 # Database libs
-sqlx = { version = "0.8", features = ["postgres"] }
+sqlx = { version = "0.8.6", features = ["tls-rustls", "postgres", "time", "runtime-tokio-rustls"] }
 
 # Core Utility libs
 thiserror = "2"
