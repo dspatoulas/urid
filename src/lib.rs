@@ -17,11 +17,11 @@ pub enum ResourceIDError {
     #[error("Unable to decode internal Ulid: {0}")]
     UnableToDecodeUlid(ulid::DecodeError),
 
-    #[error("Invalid resource type on identifier: {0}")]
-    InvalidResourceIdentifierLength(String),
+    #[error("Invalid resource type: {0}")]
+    InvalidResourceType(String),
 
     #[error("Invalid ID length: {0} (expected 30)")]
-    InvalidUridLength(String),
+    InvalidLength(String),
 }
 
 #[derive(Debug, Clone, PartialEq, Eq)]
@@ -70,7 +70,7 @@ impl ResourceID {
     fn validate_resource<S: ToString>(resource: S) -> Result<(), ResourceIDError> {
         let value = resource.to_string();
         if value.len() != 4 {
-            Err(ResourceIDError::InvalidResourceIdentifierLength(
+            Err(ResourceIDError::InvalidResourceType(
                 value,
             ))
         }
@@ -91,14 +91,14 @@ impl FromStr for ResourceID {
 
     fn from_str(s: &str) -> Result<Self, ResourceIDError> {
         if s.len() != 30 {
-            return Err(ResourceIDError::InvalidUridLength(s.to_string()));
+            return Err(ResourceIDError::InvalidLength(s.to_string()));
         }
+        
         let resource_str = &s[..4];
-        let ulid_str = &s[4..];
-
-        let ulid = Ulid::from_str(ulid_str).map_err(ResourceIDError::UnableToDecodeUlid)?;
-
         Self::validate_resource(resource_str)?;
+
+        let ulid_str = &s[4..];
+        let ulid = Ulid::from_str(ulid_str).map_err(ResourceIDError::UnableToDecodeUlid)?;
 
         Ok(ResourceID { resource: String::from(resource_str.to_uppercase()), ulid })
     }
@@ -164,7 +164,7 @@ mod tests {
 
         assert!(id.is_err());
 
-        assert_eq!(id.err(), Some(ResourceIDError::InvalidResourceIdentifierLength(invalid_id.to_string())));
+        assert_eq!(id.err(), Some(ResourceIDError::InvalidResourceType(invalid_id.to_string())));
     }
 
     #[test]
@@ -175,7 +175,7 @@ mod tests {
 
         assert!(id.is_err());
 
-        assert_eq!(id.err(), Some(ResourceIDError::InvalidResourceIdentifierLength(invalid_id.to_string())));
+        assert_eq!(id.err(), Some(ResourceIDError::InvalidResourceType(invalid_id.to_string())));
     }
 
     #[test]
