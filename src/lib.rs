@@ -18,7 +18,10 @@ pub enum ResourceIDError {
     UnableToDecodeUlid(ulid::DecodeError),
 
     #[error("Invalid resource type on identifier: {0}")]
-    InvalidIdentifierResourceLength(String),
+    InvalidResourceIdentifierLength(String),
+
+    #[error("Invalid ID length: {0} (expected 30)")]
+    InvalidUridLength(String),
 }
 
 #[derive(Debug, Clone, PartialEq, Eq)]
@@ -67,7 +70,7 @@ impl ResourceID {
     fn validate_resource<S: ToString>(resource: S) -> Result<(), ResourceIDError> {
         let value = resource.to_string();
         if value.len() != 4 {
-            Err(ResourceIDError::InvalidIdentifierResourceLength(
+            Err(ResourceIDError::InvalidResourceIdentifierLength(
                 value,
             ))
         }
@@ -87,6 +90,9 @@ impl FromStr for ResourceID {
     type Err = ResourceIDError;
 
     fn from_str(s: &str) -> Result<Self, ResourceIDError> {
+        if s.len() != 30 {
+            return Err(ResourceIDError::InvalidUridLength(s.to_string()));
+        }
         let resource_str = &s[..4];
         let ulid_str = &s[4..];
 
@@ -158,7 +164,7 @@ mod tests {
 
         assert!(id.is_err());
 
-        assert_eq!(id.err(), Some(ResourceIDError::InvalidIdentifierResourceLength(invalid_id.to_string())));
+        assert_eq!(id.err(), Some(ResourceIDError::InvalidResourceIdentifierLength(invalid_id.to_string())));
     }
 
     #[test]
@@ -169,7 +175,7 @@ mod tests {
 
         assert!(id.is_err());
 
-        assert_eq!(id.err(), Some(ResourceIDError::InvalidIdentifierResourceLength(invalid_id.to_string())));
+        assert_eq!(id.err(), Some(ResourceIDError::InvalidResourceIdentifierLength(invalid_id.to_string())));
     }
 
     #[test]
