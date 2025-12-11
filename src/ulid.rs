@@ -5,7 +5,7 @@ use schemars::schema::{InstanceType, Schema, SchemaObject};
 use schemars::JsonSchema;
 pub use ulid::DecodeError;
 
-#[derive(Debug, Clone, PartialEq, Eq)]
+#[derive(Debug, Clone, PartialEq, Eq, Hash)]
 pub struct Ulid(ulid::Ulid);
 
 impl Ulid {
