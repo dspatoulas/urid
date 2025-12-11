@@ -26,7 +26,7 @@ pub enum ResourceIDError {
 
 #[derive(Debug, Clone, PartialEq, Eq, Hash)]
 pub struct ResourceID {
-    resource: String,
+    pub resource: String,
     ulid: Ulid,
 }
 
