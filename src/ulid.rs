@@ -1,8 +1,8 @@
+use std::borrow::Cow;
 use std::ops::Deref;
 use std::str::FromStr;
 
-use schemars::schema::{InstanceType, Schema, SchemaObject};
-use schemars::JsonSchema;
+use schemars::{json_schema, JsonSchema, Schema};
 pub use ulid::DecodeError;
 
 #[derive(Debug, Clone, PartialEq, Eq, Hash)]
@@ -33,16 +33,14 @@ impl Deref for Ulid {
 }
 
 impl JsonSchema for Ulid {
-    fn schema_name() -> String {
-        String::from("Ulid")
+    fn schema_name() -> Cow<'static, str> {
+        "Ulid".into()
     }
 
-    fn json_schema(_gen: &mut schemars::gen::SchemaGenerator) -> Schema {
-        SchemaObject {
-            instance_type: Some(InstanceType::String.into()),
-            format: Some("ulid".to_string()),
-            ..Default::default()
-        }
-            .into()
+    fn json_schema(_gen: &mut schemars::SchemaGenerator) -> Schema {
+        json_schema!({
+            "type": "string",
+            "format": "ulid",
+        })
     }
 }

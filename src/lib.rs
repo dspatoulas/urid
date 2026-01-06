@@ -1,11 +1,11 @@
 mod ulid;
 
+use std::borrow::Cow;
 use std::fmt;
 use std::fmt::{Display, Formatter};
 use std::str::FromStr;
 
-use schemars::schema::{InstanceType, Metadata, Schema, SchemaObject};
-use schemars::JsonSchema;
+use schemars::{json_schema, JsonSchema, Schema};
 use serde::{Deserialize, Deserializer, Serialize, Serializer};
 use sqlx::postgres::{PgArgumentBuffer, PgTypeInfo, PgValueRef};
 use sqlx::{Decode, Encode, Postgres, Type};
@@ -31,24 +31,19 @@ pub struct ResourceID {
 }
 
 impl JsonSchema for ResourceID {
-    fn schema_name() -> String {
-        "ResourceID".to_string()
+    fn schema_name() -> Cow<'static, str> {
+        "ResourceID".into()
     }
 
-    fn json_schema(_gen: &mut schemars::gen::SchemaGenerator) -> Schema {
-        SchemaObject {
-            instance_type: Some(InstanceType::String.into()),
-            format: Some("ResourceID".to_string()),
-            metadata: Some(Box::new(Metadata {
-                title: Some(String::from("ResourceID")),
-                description: Some(String::from(
-                    "A unique resource identifier",
-                )),
-                ..Default::default()
-            })),
-            ..Default::default()
-        }
-            .into()
+    fn json_schema(_gen: &mut schemars::SchemaGenerator) -> Schema {
+        json_schema!({
+            "type": "string",
+            "format": "ResourceID",
+            "metadata": {
+                "title": "ResourceID",
+                "description": "A unique resource identifier",
+            }
+        })
     }
 }
 
